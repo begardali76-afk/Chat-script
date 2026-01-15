@@ -1,0 +1,73 @@
+local success, err = pcall(function()
+    local p = game.Players.LocalPlayer
+    if not p then return end
+    local playerGui = p:WaitForChild("PlayerGui")
+
+    local g = Instance.new("ScreenGui")
+    g.Name = "White"
+    g.Parent = playerGui
+
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(0,80,0,30)
+    btn.Position = UDim2.new(0,50,0,50)
+    btn.Text = "White"
+    btn.Active = true
+    btn.Draggable = true
+    btn.Parent = g
+
+    local f = Instance.new("Frame")
+    f.Size = UDim2.new(0,200,0,80)
+    f.Position = UDim2.new(0,50,0,90)
+    f.Active = true
+    f.Draggable = true
+    f.Visible = false
+    f.Parent = g
+
+    local t = Instance.new("TextBox")
+    t.Size = UDim2.new(1,-20,0,30)
+    t.Position = UDim2.new(0,10,0,10)
+    t.PlaceholderText = "Mesajını yaz..."
+    t.Parent = f
+
+    local s = Instance.new("TextButton")
+    s.Size = UDim2.new(0,60,0,25)
+    s.Position = UDim2.new(1,-70,1,-35)
+    s.Text = "Gönder"
+    s.Parent = f
+
+    s.MouseButton1Click:Connect(function()
+        local msg = t.Text
+        if msg ~= "" and game:GetService("ReplicatedStorage"):FindFirstChild("DefaultChatSystemChatEvents") then
+            local chatEvent = game:GetService("ReplicatedStorage"):DefaultChatSystemChatEvents:FindFirstChild("SayMessageRequest")
+            if chatEvent then
+                chatEvent:FireServer(msg,"All")
+            end
+            t.Text = ""
+        end
+    end)
+
+    btn.MouseButton1Click:Connect(function()
+        f.Visible = not f.Visible
+    end)
+
+    -- RGB animasyon
+    spawn(function()
+        local r,g,b = 255,0,0
+        local dr,dg,db = -5,5,0
+        while f.Parent do
+            r = math.clamp(r+dr,0,255)
+            g = math.clamp(g+dg,0,255)
+            b = math.clamp(b+db,0,255)
+            f.BackgroundColor3 = Color3.fromRGB(r,g,b)
+            btn.BackgroundColor3 = Color3.fromRGB(r,g,b)
+            wait(0.05)
+            if r==0 or r==255 then dr=-dr end
+            if g==0 or g==255 then dg=-dg end
+            if b==0 or b==255 then db=-db end
+        end
+    end)
+end)
+
+if not success then
+    warn("White GUI scripti çalıştırılamadı:", err)
+end
